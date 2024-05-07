@@ -1,4 +1,3 @@
-import pandas as pd
 import numpy as np
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
@@ -9,7 +8,9 @@ from nltk.corpus import wordnet
 from nltk.stem import PorterStemmer
 from num2words import num2words
 import re
+import nltk
 
+nltk.download('all')
 def get_wordnet_pos(tag_parameter):
 
     tag = tag_parameter[0].upper()
