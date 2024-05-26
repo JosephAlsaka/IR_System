@@ -12,10 +12,6 @@ class SearchText(BaseModel):
 async def root():
     return {"message": "Hello World"}
 
-@app.get("/preprocess")
-async def get_preprocess():
-    return {"message": preprocess("Hello World is the best")}
-
-@app.post("/preprocess")
-async def post_preprocess(searchText:SearchText):
-    return {"message": preprocess(searchText.text)}
+@app.post("/search/{id}")
+async def search(searchText:SearchText,id:int):
+    return {"results": [preprocess(searchText.text)]}

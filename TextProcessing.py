@@ -11,6 +11,7 @@ import re
 import nltk
 
 nltk.download('all')
+
 def get_wordnet_pos(tag_parameter):
 
     tag = tag_parameter[0].upper()
@@ -39,16 +40,6 @@ def remove_stop_words(data):
             new_text = new_text + " " + w
     return new_text
 
-def remove_punctuation(data):
-    symbols = "!\"#$%&()*+-–…°./:;<=>?@[\]^_`{|}~\n"
-    for i in range(len(symbols)):
-        data = np.char.replace(data, symbols[i], ' ')
-        data = np.char.replace(data, "  ", " ")
-    data = np.char.replace(data, ',', ' ')
-    return data
-
-def remove_apostrophe(data):
-    return np.char.replace(data, "'", " ")
 
 def stemming(data):
     stemmer= PorterStemmer()
@@ -81,17 +72,6 @@ def convert_numbers(data):
     new_text = np.char.replace(new_text, "-", " ")
     return new_text
 
-def correct_sentence_spelling(data) :
-    spell = SpellChecker()
-    tokens = word_tokenize(str(data))
-    new_text = ""
-    for w in tokens:
-        corrected = spell.correction(w)
-        if corrected is None:
-            corrected =  w
-        new_text = new_text + " " + corrected
-    return new_text
-
 def alpha_num_separator(data):
     words = word_tokenize(str(data))
     new_word=' '
@@ -104,22 +84,9 @@ def alpha_num_separator(data):
     return new_word
 
 def preprocess(data):
-    old_data=data
     data = convert_lower_case(data)
     data = alpha_num_separator(data)
-    data = remove_punctuation(data) #remove comma seperately
-    data = remove_apostrophe(data)
-    # data = correct_sentence_spelling(data)
-    data = remove_stop_words(data)
     data = convert_numbers(data)
-    data = correct_sentence_spelling(data)
-    # data = stemming(data)
+    data = remove_stop_words(data)
     data = lemmatization(data)
-    # data = remove_punctuation(data)
-    # data = convert_numbers(data)
-    # data = stemming(data) #needed again as we need to stem the words
-    # # data = lemmatization(data)
-    # data = remove_punctuation(data) #needed again as num2word is giving few hypens and commas fourty-one
-    data = remove_stop_words(data) #needed again as num2word is giving stop words 101 - one hundred and one
-    # return old_data if data == '' else data
     return data
