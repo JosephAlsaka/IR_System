@@ -9,8 +9,18 @@ from nltk.stem import PorterStemmer
 from num2words import num2words
 import re
 import nltk
+from spellchecker import SpellChecker
 
-nltk.download('all')
+def correct_sentence_spelling(data) :
+    spell = SpellChecker()
+    tokens = word_tokenize(str(data))
+    new_text = ""
+    for w in tokens:
+        corrected = spell.correction(w)
+        if corrected is None:
+            corrected =  w
+        new_text = new_text + " " + corrected
+    return new_text
 
 def get_wordnet_pos(tag_parameter):
 
@@ -25,7 +35,7 @@ def get_wordnet_pos(tag_parameter):
 def extract_all_sections(s):
     numeric_sections = re.findall(r'\d+', s)  # Extracting all numeric sections
     alpha_sections = re.findall(r'[a-zA-Z]+', s)  # Extracting all alphabetic sections
-    return numeric_sections, alpha_sections
+    return sections
 
 
 def convert_lower_case(data):
@@ -39,6 +49,14 @@ def remove_stop_words(data):
         if w not in stop_words and len(w) > 1:
             new_text = new_text + " " + w
     return new_text
+
+def remove_punctuation(data):
+    symbols = "!\"#$%&()*+-–…°./':;<=>?@[\]^_`{|}~\n"
+    for i in range(len(symbols)):
+        data = np.char.replace(data, symbols[i], ' ')
+        data = np.char.replace(data, "  ", " ")
+    data = np.char.replace(data, ',', ' ')
+    return data
 
 
 def stemming(data):
@@ -76,17 +94,17 @@ def alpha_num_separator(data):
     words = word_tokenize(str(data))
     new_word=' '
     for word in words:
-        numeric_sections, alpha_sections = extract_all_sections(word)
-        for section in numeric_sections:
-            new_word+=section+' '
-        for section in alpha_sections:
+        sections= re.findall(r'\d+|[a-zA-Z]+', word)
+        for section in sections:
             new_word+=section+' '
     return new_word
+
 
 def preprocess(data):
     data = convert_lower_case(data)
     data = alpha_num_separator(data)
     data = convert_numbers(data)
+    data = correct_sentence_spelling(data)
     data = remove_stop_words(data)
     data = lemmatization(data)
     return data
